@@ -1,0 +1,17 @@
+{
+  "name": "USC to THB Converter - iPhone 16 Pro Max",
+  "short_name": "USC Converter",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "เครื่องคำนวณแปลงค่าเงิน USC เป็น บาท (THB) ดีไซน์พิเศษสำหรับ iPhone 16 Pro Max",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
