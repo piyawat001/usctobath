@@ -288,8 +288,15 @@
 
     if (isNaN(amount) || amount <= 0) {
       resultValue.textContent = '0.00';
-      formulaText.textContent = '-';
-      approxCompareText.textContent = '-';
+      if (state.mode === 'USC_TO_THB') {
+        resultUnit.textContent = '฿';
+        formulaText.textContent = `0 USC × ${state.rate.toFixed(6)} = 0.00 ฿`;
+        approxCompareText.textContent = `≈ 0.00 ฿ (เรท 0.34)`;
+      } else {
+        resultUnit.textContent = 'USC';
+        formulaText.textContent = `0.00 ฿ ÷ ${state.rate.toFixed(6)} = 0.00 USC`;
+        approxCompareText.textContent = `≈ 0.00 USC (เรท 0.34)`;
+      }
       return;
     }
 
@@ -337,7 +344,7 @@
       inputUnitSymbol.textContent = 'USC';
       resultFieldLabel.textContent = 'ผลลัพธ์ (บาทไทย THB)';
       resultUnit.textContent = '฿';
-      amountInput.value = '14,773';
+      amountInput.value = '0';
     } else {
       modeUscToThb.classList.remove('active');
       modeThbToUsc.classList.add('active');
@@ -346,7 +353,7 @@
       inputUnitSymbol.textContent = '฿';
       resultFieldLabel.textContent = 'ผลลัพธ์ (จำนวน USC ที่ได้รับ)';
       resultUnit.textContent = 'USC';
-      amountInput.value = '4,995.26';
+      amountInput.value = '0';
     }
 
     renderPresets();
@@ -411,9 +418,23 @@
     clearInputBtn.addEventListener('click', () => {
       playClickSound(700);
       triggerHaptic(10);
-      amountInput.value = '';
+      amountInput.value = '0';
       amountInput.focus();
+      amountInput.select();
       calculate();
+    });
+
+    amountInput.addEventListener('focus', () => {
+      if (amountInput.value === '0') {
+        amountInput.select();
+      }
+    });
+
+    amountInput.addEventListener('blur', () => {
+      if (!amountInput.value.trim()) {
+        amountInput.value = '0';
+        calculate();
+      }
     });
 
     // Copy Result
@@ -525,7 +546,7 @@
 
       if (key !== undefined) {
         if (key === '.' && current.includes('.')) return;
-        if (current === '0' && key !== '.') {
+        if ((current === '0' || current === '') && key !== '.') {
           current = key;
         } else {
           current += key;
@@ -534,10 +555,11 @@
         calculate();
       } else if (action === 'backspace') {
         current = current.slice(0, -1);
+        if (current === '' || current === '-') current = '0';
         amountInput.value = current;
         calculate();
       } else if (action === 'clear') {
-        amountInput.value = '';
+        amountInput.value = '0';
         calculate();
       } else if (action === 'swap') {
         setMode(state.mode === 'USC_TO_THB' ? 'THB_TO_USC' : 'USC_TO_THB');
@@ -622,7 +644,8 @@
     renderHistory();
     initEvents();
 
-    // Default calculation
+    // Default amount is 0
+    amountInput.value = '0';
     calculate();
   }
 
